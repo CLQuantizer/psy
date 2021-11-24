@@ -46,30 +46,30 @@ function hide(ID){
     }
 }
 
-document.addEventListener("keypress",
-function(e){
-	if(question.length<3){loadQ=0;}
-	if(InQ==1){if(e.key == 'Enter'){loadAnswer();}}
-	if(loadW==0 && loadS==0){		
-		loadQuestion(question);
-		if(e.key == 'f'|e.key == 'F')
-			{
-			K = 'yes'; curKT = Date.now();
-			 hide('err');loadQ=0;loadSent();}
-                else if(e.key == 'j'|e.key == 'J')
-			{K = 'no';
-			 curKT = Date.now();
-			 hide('err');loadQ=0;loadSent();}
-                else{if (InQ==1){show('err');}}
-		    }
-	if(loadW==1){
-		if(e.key == 'Enter'){loadWord(wordList);}else{show('err');}
-		    }
-	if(loadS==1){
-		if(e.key == 'Enter'){loadSent(); curKT = Date.now();
-				    }else{show('err');}
-	     }            
-})
+// document.addEventListener("keypress",
+// function(e){
+// 	if(question.length<3){loadQ=0;}
+// 	if(InQ==1){if(e.key == 'Enter'){loadAnswer();}}
+// 	if(loadW==0 && loadS==0){		
+// 		loadQuestion(question);
+// 		if(e.key == 'f'|e.key == 'F')
+// 			{
+// 			K = 'yes'; curKT = Date.now();
+// 			 hide('err');loadQ=0;loadSent();}
+//                 else if(e.key == 'j'|e.key == 'J')
+// 			{K = 'no';
+// 			 curKT = Date.now();
+// 			 hide('err');loadQ=0;loadSent();}
+//                 else{if (InQ==1){show('err');}}
+// 		    }
+// 	if(loadW==1){
+// 		if(e.key == 'Enter'){loadWord(wordList);}else{show('err');}
+// 		    }
+// 	if(loadS==1){
+// 		if(e.key == 'Enter'){loadSent(); curKT = Date.now();
+// 				    }else{show('err');}
+// 	     }            
+// })
   
 
 function sleep(milliseconds) {
