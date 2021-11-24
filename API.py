@@ -22,13 +22,15 @@ async def read_item(request: Request, id: str):
 async def go(request: Request, scnt:str, wcnt:str):
     ls = []
     scnt = int(scnt)
-    ls.append({'s':'While the mother washed the baby shat on the floor','q':'did the mom wash the baby?'})
-    ls.append({'s':'While the mother dressed the baby shat on the floor','q':''})
-    ls.append({'s':'While the mother dressed the baby shat on the floor','q':'did the mom shit on the floor?'})
-    ls.append({'s':'While the mother dressed the baby shat on the floor','q':''})
+    ls.append({'s':'While the mother washed the baby shat on the floor','q':'did the mom wash the baby?','a':'no'})
+    ls.append({'s':'While the mother washed the baby, she shat on the floor','q':'did the baby shat on the floor?','a':'yes'})
+    ls.append({'s':'This is a sentence without question','q':'','a':''})
+    ls.append({'s':'The horse raced past the barn fell','q':'did the barn fall?','a':'no'})
+    ls.append({'s':'This is the last sentence of this experiment.','q':'OK?','a':'yes'})
     # above is dataframe preprocessing, below is communiation
     sent = ls[scnt]['s']
     q = ls[scnt]['q']
+    a = ls[scnt]['a']
     # end of a sentence, the next returned sentence is the question or nothing
 #        r = templates.TemplateResponse('inplace.html',{'request':request, 'sent':question})
     # read next word within the sentence
@@ -36,7 +38,7 @@ async def go(request: Request, scnt:str, wcnt:str):
   #      scnt=scnt
    #     r = templates.TemplateResponse('inplace.html',{'request':request, 'sent':sent})
   #  rendered_sent = r.template.render(r.context)
-    content = {'s':sent,'scnt':scnt,'wcnt':wcnt,'q':q}
+    content = {'s':sent,'scnt':scnt,'wcnt':wcnt,'q':q,'a':a}
     json_data = jsonable_encoder(content)
     print(f'q is {q}, scnt is {scnt}')
     print(json_data)

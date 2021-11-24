@@ -22,11 +22,12 @@ var wordList;
 var loadS =1;
 var loadW =0;
 var loadQ=0;
+var loadA=0;
 var InQ =0;
 var scnt = 0;
 var wcnt = 0;
 var curw ='';
-var q = 0;
+var answer = '';
 var question ='';
 var prevKT = Date.now();
 var curKT = 0;
@@ -46,56 +47,39 @@ function hide(ID){
     }
 }
 
-// document.addEventListener("keypress",
-// function(e){
-// 	if(question.length<3){loadQ=0;}
-// 	if(InQ==1){if(e.key == 'Enter'){loadAnswer();}}
-// 	if(loadW==0 && loadS==0){		
-// 		loadQuestion(question);
-// 		if(e.key == 'f'|e.key == 'F')
-// 			{
-// 			K = 'yes'; curKT = Date.now();
-// 			 hide('err');loadQ=0;loadSent();}
-//                 else if(e.key == 'j'|e.key == 'J')
-// 			{K = 'no';
-// 			 curKT = Date.now();
-// 			 hide('err');loadQ=0;loadSent();}
-//                 else{if (InQ==1){show('err');}}
-// 		    }
-// 	if(loadW==1){
-// 		if(e.key == 'Enter'){loadWord(wordList);}else{show('err');}
-// 		    }
-// 	if(loadS==1){
-// 		if(e.key == 'Enter'){loadSent(); curKT = Date.now();
-// 				    }else{show('err');}
-// 	     }            
-// })
-  
+document.addEventListener("keypress",
+function(e){
+	if(InQ==1){
+		if(e.key == 'f'|e.key == 'F'){K = 'yes'; curKT = Date.now();hide('err');loadAnswer();InQ=0;}
+		else if(e.key == 'j'|e.key == 'J'){K = 'no'; curKT = Date.now();hide('err');loadAnswer();InQ=0;}
+		else{show('err');}
+	}
+	else{
+		if(e.key == 'Enter'){
+			if(loadA==1){loadAnswer();}
+			if(loadQ==1){loadQuestion();scnt+=1;loadQ=0;}
+			if(loadS==1){loadSent();}
+			if(loadW==1){loadWord();}	
+		}	
+	}
+})
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
+// function sleep(milliseconds) {
+//   const date = Date.now();
+//   let currentDate = null;
+//   do {
+//     currentDate = Date.now();
+//   } while (currentDate - date < milliseconds);
+// }
 
-function loadQuestion(question){
-	InQ=1;
-	if(question.length<3){
-		document.getElementById("sent").innerHTML =' ';
-		hide('err');
-		}
-	document.getElementById("sent").innerHTML = question;
-}
 function loadAnswer(){
-		InQ =0;
+		InQ =0;loadA=0;loadS=1;
 		hide('err');
-		document.getElementById("sent").innerHTML = 'OK';
+		if (K == answer){document.getElementById("sent").innerHTML = "You are right!";}
+		else{document.getElementById("sent").innerHTML = "Wrong...";}
 }
 
-function loadWord(wordList){
-//	alert(wcnt);
+function loadWord(){
 	let sent = '';
 	let len = wordList.length;
 	for(let i =0; i<len; i++){
@@ -103,11 +87,19 @@ function loadWord(wordList){
 		else{sent+= '_'.repeat(wordList[i].length)+' ';}
 	}
 	document.getElementById("sent").innerHTML = sent;
+	// stop loadingwords and start loading the question
+	if(wcnt==len-1){loadW=0;loadQ=1;}
+	else{wcnt+=1;}
+}
 
-	if(wcnt==len-1){
-		loadW=0;wcnt=0;scnt+=1;loadS=0;
-	}
-	else{wcnt+=1;loadS=0;}
+function loadQuestion(){
+	if(question.length<3){
+		InQ=0;loadA=0;loadS=1;
+		document.getElementById("sent").innerHTML =' ';
+		hide('err');
+		}
+	else{InQ=1;document.getElementById("sent").innerHTML = question;}
+	//after question, increase sentence count
 }
 
 function loadSent()
@@ -117,16 +109,20 @@ function loadSent()
         type: 'POST',
         dataType: 'json',
         success: function(data){
-	//	 alert(data);
-		 wordList = data.s.split(' ');
-	//	 alert(wordList);
-		 scnt = data.scnt;
-             	 question=data.q;
-		 loadS=0;
-	//	 alert(loadS);
-		 loadWord(wordList);
-		 loadW=1;
-	//	 $(sent).replaceWith(wordList);
+			 wordList = data.s.split(' ');
+			 scnt = data.scnt;
+	         question=data.q;
+	         answer = data.a;
+	         let s = '';
+	         for(let i =0;i<wordList.length;i++){
+	         	s+='_'.repeat(wordList[i].length)+' ';
+	         }
+			 document.getElementById("sent").innerHTML = s;
+			 wcnt=0;
+			 loadW=1;
+			 loadS=0;
+			 loadQ=0;
+			 loadA=0;
                 }
           });
 }
