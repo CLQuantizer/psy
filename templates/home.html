@@ -56,9 +56,10 @@ function(e){
 	}
 	else{
 		if(e.key == 'Enter'){
+			// loadA and loadS must be excuted before loadQ
 			if(loadA==1){loadAnswer();}
-			if(loadQ==1){loadQuestion();scnt+=1;loadQ=0;}
 			if(loadS==1){loadSent();}
+			if(loadQ==1){loadQuestion();scnt+=1;loadQ=0;}
 			if(loadW==1){loadWord();}	
 		}	
 	}
@@ -94,9 +95,10 @@ function loadWord(){
 
 function loadQuestion(){
 	if(question.length<3){
-		InQ=0;loadA=0;loadS=1;
+		InQ=0;loadA=0;
 		document.getElementById("sent").innerHTML ='No question: press Enter once to continue';
 		hide('err');
+		loadS=1;
 		}
 	else{InQ=1;document.getElementById("sent").innerHTML = question;}
 	//after question, increase sentence count
