@@ -5,17 +5,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<h3 style='color:red'>This place is for dashed sentences only!</h3>
-
+<h3 style='font-family: Garamond;'>This place is for dashed sentences and welcome...</h3>
 </body>
-<p><b>What are you doing here?</b></p>
-<div id ="sent">{{sent}}</div>	
-<p id ="err" style ="color:red;visibility: hidden;font-size:10px;font-style: italic;">f for <em>YES</em> and j for <em> NO</em></p>
-<ul>
+<br></br>
+<div id ="sent" style = 'text-align: center;font-size:20px;font-family: Garamond;'>{{sent}}</div>	
+<p id ="err" style ="text-align: center; color:blue;visibility: hidden;font-size:15px;font-style: italic;">f for <em>YES</em> and j for <em> NO</em></p>
+<br></br>
+<ul style='color: #00CED1;'>
 <li><b>Reading from .csv is being developed</b></li>
 <li><b>The authentication is also being developed</b></li>
 </ul>
 <script>
+var allData=[];
 var uID = '';
 var sID = '';
 var wordList;
@@ -26,13 +27,12 @@ var loadA=0;
 var InQ =0;
 var scnt = 0;
 var wcnt = 0;
-var curw ='';
+var curW ='';
 var answer = '';
 var question ='';
-var prevKT = Date.now();
-var curKT = 0;
-var K = '';
+var prevKT = 0;
 var RT = 0;
+var K = '';
 
 function show(ID){
     var err = document.getElementById(ID);
@@ -50,8 +50,12 @@ function hide(ID){
 document.addEventListener("keypress",
 function(e){
 	if(InQ==1){
-		if(e.key == 'f'|e.key == 'F'){K = 'yes'; curKT = Date.now();hide('err');loadAnswer();InQ=0;}
-		else if(e.key == 'j'|e.key == 'J'){K = 'no'; curKT = Date.now();hide('err');loadAnswer();InQ=0;}
+		if(e.key == 'f'|e.key == 'F'){
+			K = 'yes'; RT = Date.now()-prevKT; prevKT = Date.now();;
+			hide('err');loadAnswer();InQ=0;}
+		else if(e.key == 'j'|e.key == 'J'){
+			K = 'no'; RT = Date.now()-prevKT; prevKT = Date.now();
+			hide('err');loadAnswer();InQ=0;}
 		else{show('err');}
 	}
 	else{
@@ -61,7 +65,8 @@ function(e){
 			if(loadA==1){loadAnswer();}
 			if(loadQ==1){loadQuestion();scnt+=1;loadQ=0;}
 			if(loadW==1){loadWord();}	
-		}	
+		
+		}
 	}
 })
 
@@ -72,6 +77,10 @@ function(e){
 //     currentDate = Date.now();
 //   } while (currentDate - date < milliseconds);
 // }
+function bunchData(){
+	let row = {W:curW,RT: RT};
+	return row;
+}
 
 function loadAnswer(){
 		InQ =0;loadA=0;loadS=1;
@@ -81,6 +90,7 @@ function loadAnswer(){
 }
 
 function loadWord(){
+
 	let sent = '';
 	let len = wordList.length;
 	for(let i =0; i<len; i++){
@@ -89,11 +99,20 @@ function loadWord(){
 	}
 	document.getElementById("sent").innerHTML = sent;
 	// stop loadingwords and start loading the question
+	RT = Date.now()-prevKT; prevKT = Date.now();
+	if(wcnt>0){curW = wordList[wcnt-1];let g = bunchData();allData.push([g.W,g.RT]);}
 	if(wcnt==len-1){loadW=0;loadQ=1;}
 	else{wcnt+=1;}
+
 }
 
 function loadQuestion(){
+	// update the reading time of the last word
+	show('err');
+	RT = Date.now()-prevKT; prevKT = Date.now();
+	curW = wordList[wordList.length-1];
+	let g = bunchData();allData.push([g.W,g.RT]);
+
 	if(question.length<3){
 		InQ=0;loadA=0;
 		document.getElementById("sent").innerHTML ='No question: press Enter once to continue';
@@ -125,9 +144,11 @@ function loadSent()
 			 loadS=0;
 			 loadQ=0;
 			 loadA=0;
+			 prevKT=Date.now();
                 }
           });
 }
 
+document.addEventListener("keypress",function(e){if(e.key == 'q'|e.key == 'Q'){alert(allData);}})
 </script>
 </html>
