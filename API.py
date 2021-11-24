@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
-
+print(' ')
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
