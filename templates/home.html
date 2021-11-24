@@ -76,7 +76,7 @@ function loadAnswer(){
 		InQ =0;loadA=0;loadS=1;
 		hide('err');
 		if (K == answer){document.getElementById("sent").innerHTML = "You are right!";}
-		else{document.getElementById("sent").innerHTML = "Wrong...";}
+		else{document.getElementById("sent").innerHTML = "Wrong..Press Enter once to continue.";}
 }
 
 function loadWord(){
@@ -95,7 +95,7 @@ function loadWord(){
 function loadQuestion(){
 	if(question.length<3){
 		InQ=0;loadA=0;loadS=1;
-		document.getElementById("sent").innerHTML =' ';
+		document.getElementById("sent").innerHTML ='No question: press Enter once to continue';
 		hide('err');
 		}
 	else{InQ=1;document.getElementById("sent").innerHTML = question;}
