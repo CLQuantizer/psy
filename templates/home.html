@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Self paced reading stuff</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h3 style='color:red'>This place is for dashed sentences only!</h3>
+
+</body>
+<p><b>What are you doing here?</b></p>
+<div id ="sent">{{sent}}</div>	
+<p id ="err" style ="color:red;visibility: hidden;font-size:10px;font-style: italic;">f for <em>YES</em> and j for <em> NO</em></p>
+<ul>
+<li><b>Reading from .csv is being developed</b></li>
+<li><b>The authentication is also being developed</b></li>
+</ul>
+<script>
+var uID = '';
+var sID = '';
+var wordList;
+var loadS =1;
+var loadW =0;
+var loadQ=0;
+var InQ =0;
+var scnt = 0;
+var wcnt = 0;
+var curw ='';
+var q = 0;
+var question ='';
+var prevKT = Date.now();
+var curKT = 0;
+var K = '';
+var RT = 0;
+
+function show(ID){
+    var err = document.getElementById(ID);
+    if(err.style.visibility === "hidden"){
+        err.style.visibility = "visible";
+    }
+}
+function hide(ID){
+    var err = document.getElementById(ID);
+    if(err.style.visibility === "visible"){
+        err.style.visibility = "hidden";
+    }
+}
+
+document.addEventListener("keypress",
+function(e){
+	if(question.length<3){loadQ=0;}
+	if(InQ==1){if(e.key == 'Enter'){loadAnswer();}}
+	if(loadW==0 && loadS==0){		
+		loadQuestion(question);
+		if(e.key == 'f'|e.key == 'F')
+			{
+			K = 'yes'; curKT = Date.now();
+			 hide('err');loadQ=0;loadSent();}
+                else if(e.key == 'j'|e.key == 'J')
+			{K = 'no';
+			 curKT = Date.now();
+			 hide('err');loadQ=0;loadSent();}
+                else{if (InQ==1){show('err');}}
+		    }
+	if(loadW==1){
+		if(e.key == 'Enter'){loadWord(wordList);}else{show('err');}
+		    }
+	if(loadS==1){
+		if(e.key == 'Enter'){loadSent(); curKT = Date.now();
+				    }else{show('err');}
+	     }            
+})
+  
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function loadQuestion(question){
+	InQ=1;
+	if(question.length<3){
+		document.getElementById("sent").innerHTML =' ';
+		hide('err');
+		}
+	document.getElementById("sent").innerHTML = question;
+}
+function loadAnswer(){
+		InQ =0;
+		hide('err');
+		document.getElementById("sent").innerHTML = 'OK';
+}
+
+function loadWord(wordList){
+//	alert(wcnt);
+	let sent = '';
+	let len = wordList.length;
+	for(let i =0; i<len; i++){
+		if (i==wcnt){sent += wordList[i]+' ';}
+		else{sent+= '_'.repeat(wordList[i].length)+' ';}
+	}
+	document.getElementById("sent").innerHTML = sent;
+
+	if(wcnt==len-1){
+		loadW=0;wcnt=0;scnt+=1;loadS=0;
+	}
+	else{wcnt+=1;loadS=0;}
+}
+
+function loadSent()
+{
+    $.ajax({
+        url:'/go/'+scnt+'/'+wcnt,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data){
+	//	 alert(data);
+		 wordList = data.s.split(' ');
+	//	 alert(wordList);
+		 scnt = data.scnt;
+             	 question=data.q;
+		 loadS=0;
+	//	 alert(loadS);
+		 loadWord(wordList);
+		 loadW=1;
+	//	 $(sent).replaceWith(wordList);
+                }
+          });
+}
+
+</script>
+</html>

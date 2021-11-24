@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Self paced reading stuff</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h3 style='color:red'>This place is for dashed sentences only!</h3>
+
+</body>
+<p><b>What are you doing here?</b></p>
+<div id ="sent">{{sent}}</div>	
+<p id ="err" style ="color:red;visibility: hidden;font-size:10px;font-style: italic;">please press f for yes and j for no</p>
+<ul>
+<li><b>Now there is only one demo sentence</b></li>
+<li><b>The function to read stimuli from .csv is being developed</b></li>
+<li><b>The authentication is also being developed</b></li>
+</ul>
+<script>
+var uID = '';
+var sID = '';
+var wordList;
+var loadS =1;
+var loadW =0;
+var loadQ =0;
+var scnt = 0;
+var wcnt = 0;
+var curw ='';
+var q = 0;
+var question ='';
+var prevKT = Date.now();
+var curKT = 0;
+var K = '';
+var RT = 0;
+
+function show(ID){
+    var err = document.getElementById(ID);
+    if(err.style.visibility === "hidden"){
+        err.style.visibility = "visible";
+    }
+}
+function hide(ID){
+    var err = document.getElementById(ID);
+    if(err.style.visibility === "visible"){
+        err.style.visibility = "hidden";
+    }
+}
+
+document.addEventListener("keypress",
+function(e){
+	if(loadQ==1){
+		if(e.key == 'f'|e.key == 'F')
+			{K = 'yes'; loadQuestion(); curKT = Date.now(); hide('err');}
+                else if(e.key == 'j'|e.key == 'J')
+			{K = 'no';  loadQuestion(); curKT = Date.now(); hide('err');}
+                else{show('err');}
+		    }
+	else if(loadW==1){if(e.key == 'Enter'){loadWord(wordList);}else{toggle('err');}}
+	else {
+		if(e.key == 'Enter'){loadSent(); curKT = Date.now();
+				    }else{toggle('err');}
+	     }            
+})
+  
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function loadWord(wordList){
+	wcnt=0;
+	let sent = '';
+	let len = wordList.length;
+	for(let i =0; i<len; i++){
+		if (i==wcnt){sent += wordList[i]+' ';}
+		else{sent+= '_'.repeat(wordList[i].length)+' ';}
+	}
+	document.getElementById("sent").innerHTML = sent;
+	if(wcnt==len){wcnt=0;}
+	else{wcnt+=1;}
+}
+function loadQuestion(Question){
+	document.getElementById("Q").innerHTML = sent;	
+}
+
+function loadSent()
+{
+    $.ajax({
+        url:'/go/'+scnt+'/'+wcnt+'/'+q,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data){
+	//	 alert(data);
+	//	 sleep(0);
+		 wordList = data.s.split(' ');
+	//	 alert(wordList);
+		 wcnt = 1;
+		 scnt = data.scnt;
+             	 q=data.q;
+	//	 $(sent).replaceWith(s);
+                }
+          });
+}
+
+</script>
+</html>

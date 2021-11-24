@@ -1,0 +1,12 @@
+h1 {
+    color: green;
+}
+
+title{color: red;}
+p {word-spacing:20px;}
+
+div {
+	word-spacing: 20px;
+        font-family:Verdana;
+	    text-align:center;
+}
