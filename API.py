@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get('/',response_class = HTMLResponse)
 async def home(request: Request):
-    sent = 'Press Enter to read. When prompted a questions, use f for yes and j for no.'
+    sent = 'Press Enter to read. When prompted a question, use f for yes and j for no.'
     return templates.TemplateResponse('home.html', {'request':request, 'sent':sent})
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):

@@ -56,9 +56,9 @@ function(e){
 	}
 	else{
 		if(e.key == 'Enter'){
-			// loadA and loadS must be excuted before loadQ
-			if(loadA==1){loadAnswer();}
+			// loadS must be excuted at the begeining since it updates the states
 			if(loadS==1){loadSent();}
+			if(loadA==1){loadAnswer();}
 			if(loadQ==1){loadQuestion();scnt+=1;loadQ=0;}
 			if(loadW==1){loadWord();}	
 		}	
